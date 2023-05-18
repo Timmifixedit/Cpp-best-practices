@@ -1,0 +1,169 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemelaas}
+[2017/05/31 v1.0 LAAS Beamer theme]
+\RequirePackage{tikz}
+\RequirePackage[absolute, overlay]{textpos}
+\RequirePackage[skins,theorems]{tcolorbox}
+
+\usetikzlibrary{positioning}
+
+\mode<presentation>
+{
+  \usetheme{Boadilla}
+  % \useinnertheme{rectangles}
+  \usefonttheme[onlylarge]{structurebold}
+}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+\setbeamertemplate{itemize/enumerate subbody begin}{\scriptsize}
+\setbeamertemplate{itemize/enumerate subsubbody begin}{\tiny}
+
+% \xdefinecolor{TBlue}{HTML}{001A3A} % {0,0.1,0.23}
+% \definecolor{KindOfBlue}{rgb}{0.0, 0.18, 0.39}
+\xdefinecolor{KindOfBlue}{HTML}{001A3A} % {0,0.1,0.23}
+\xdefinecolor{KindOfRed}{HTML}{FF2E45} % {1.0,0.18,0.27}
+\usecolortheme[named=KindOfBlue]{structure}
+
+%% Margins
+\setlength{\leftmargini}{12pt}
+\setlength{\leftmarginii}{10pt}
+
+
+\setbeamerfont*{frametitle}{size=\normalsize,series=\bfseries}
+\setbeamerfont{author}{size=\normalsize}
+\setbeamerfont{date}{size=\normalsize\itshape}
+\setbeamerfont{institute}{size=\normalsize\itshape}
+\setbeamerfont{subtitle}{size=\Large\normalfont\slshape}
+
+\setbeamerfont{title}{size=\huge}
+\setbeamercolor*{title}{fg=white, bg=KindOfBlue}
+\setbeamercolor*{frametitle}{fg=white, bg=KindOfBlue}
+% \setbeamercolor*{title}{fg=KindOfBlue, bg=white}
+\setbeamercolor*{author}{fg=KindOfBlue, bg=white}
+\setbeamercolor*{date}{fg=gray, bg=white}
+
+
+
+%% TITLE PAGE
+\setbeamertemplate{title page}{%
+
+  \tcbset{enhanced}
+
+
+  \begin{tikzpicture}[remember picture,overlay]
+	
+	
+    \node[] at ([yshift=10mm]current page.center)
+    (title)
+    {\begin{tcolorbox}[
+		colback=KindOfBlue, halign=flush right, valign=top,
+        width=\paperwidth, height=60pt, arc=0pt, boxrule=0pt,
+        shadow={0pt}{-1pt}{0pt}{fill=black, opacity=0.30}]%
+      \end{tcolorbox}};
+
+
+	\node[inner sep=0, yshift=0.026\paperwidth] at (current page.center)
+	{\includegraphics[width=\paperwidth,height=\glueexpr 1\paperheight - 0.050431\paperwidth]{im/background.png}};
+
+
+    \node[anchor=south west]
+    at ([yshift=-4pt, xshift=-4pt]current page.south west) (footer)
+    {\includegraphics[width=\paperwidth, height=0.050431\paperwidth]{im/Title_Bottom.png}};
+
+
+
+    \node[anchor=north west]
+    at (current page.north west) (header)
+		{\includegraphics[width=0.25\paperwidth]{im/LAAS-2016_transparent.png}};
+    % {\includegraphics[width=0.25\paperwidth]{im/LogoLAAS2016.png}};
+
+
+    \node[] at ([yshift=10mm]current page.center)
+    (title)
+    {\begin{tcolorbox}[
+		%standard jigsaw, opacityback=0.7, 
+		enhanced, opacityframe=0, opacityback=0,
+		colback=white, halign=flush right, valign=top,
+        width=\paperwidth, height=60pt, arc=0pt, boxrule=0pt,
+        shadow={0pt}{-1pt}{0pt}{fill=black, opacity=0.30}]%
+        \vspace*{5pt}
+        \usebeamercolor[fg]{title}\usebeamerfont{title}{\inserttitle}%
+      \end{tcolorbox}};
+
+    \node[] at ([yshift=-2.2pt, xshift=0.22\paperwidth]current page.center)
+    (redblock)
+    {\begin{tcolorbox}[colback=KindOfRed,
+        width=0.6\paperwidth, height=7pt, arc=0pt, boxrule=0pt,
+        shadow={0.5pt}{-0.8pt}{0pt}{fill=black, opacity=0.40}]%
+      \end{tcolorbox}};
+
+    % \colorbox{KindOfRed}{\hfill\begin{minipage}[t][2pt]{0.5\paperwidth}\hfill\end{minipage}}};
+
+    \node[below=5mm of title]
+    (author)
+    {\parbox[t]{\textwidth}{\center{
+          \usebeamercolor[fg]{author}\usebeamerfont{author}{\insertauthor}\\
+          \vspace*{5pt}
+          \usebeamercolor[fg]{date}\usebeamerfont{date}{\insertdate}
+        }}};
+
+  \end{tikzpicture}
+}
+
+\def\maketitle{%
+  \ifbeamer@inframe
+    \titlepage
+  \else%
+    \frame[plain,noframenumbering]{\titlepage}
+  \fi%
+}%
+
+\def\titlepage{%
+  \usebeamertemplate{title page}
+}
+
+%% SLIDE HEADER
+\setbeamertemplate{frametitle}[default][right]
+\addtobeamertemplate{frametitle}{%
+  \begin{textblock*}{\paperwidth}(-1pt,-1pt)
+    \vbox{\includegraphics[height=1.0cm]{im/LogoLAAS2016.png}}
+  \end{textblock*}
+}
+
+
+
+%% SLIDE FOOTER
+\setbeamertemplate{background canvas}{%
+  \vbox to \paperheight{\vfil\hbox to \paperwidth{\includegraphics[width=\paperwidth,height=6.5mm]{im/Bottom-suite.png}}}%
+}
+\setbeamertemplate{footline}%
+{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.44\paperwidth,ht=1.5ex,dp=3.5ex]{frame number in head/foot}%
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[wd=.41\paperwidth,ht=1.5ex,dp=3.5ex,left]{frame number in head/foot}%
+      \usebeamerfont{date in head/foot}
+      {\color{White} {\bf \insertsection}}
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[wd=.15\paperwidth,ht=1.5ex,dp=3.5ex,right,rightskip=3ex]{frame number in head/foot}%
+      \usebeamerfont{date in head/foot}
+      {\color{White} \insertframenumber{} / \inserttotalframenumber}
+    \end{beamercolorbox}
+  }%
+  \vskip0pt%
+}
+
+
+%% CUSTOM BLOCK ENVIRONMENT
+
+\setbeamercolor*{block title}{use=structure, fg=white, bg=KindOfBlue}
+\setbeamercolor*{block body}{use=structure, fg=black, bg=KindOfBlue!20}
+
+\setbeamercolor*{block title alerted}{use=structure, fg=white, bg=KindOfRed}
+\setbeamercolor*{block body alerted}{use=structure, fg=black, bg=KindOfRed!20}
+
+
+%%
+%% End of file `beamerthemelaas.sty'.

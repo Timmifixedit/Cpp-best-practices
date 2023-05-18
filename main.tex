@@ -1,0 +1,247 @@
+\documentclass[usenames,dvipsnames,svgnames,table,aspectratio=169]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{soul}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{minted}
+\usepackage{biblatex}
+
+\usetheme{laas}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\lstset{language=C++,
+                basicstyle=\ttfamily,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{red}\ttfamily,
+                commentstyle=\color{purple}\ttfamily,
+                morecomment=[l][\color{magenta}]{\#}
+}
+
+
+\title{Introduction to Modern C++}
+\author{Tim Luchterhand, based on a presentation by Paul Nykiel \cite{Nykiel2020}}
+\date{\today}
+
+\addbibresource{bibliography.bib}
+\begin{document}
+\maketitle
+
+\frame{
+    \tableofcontents
+}
+
+
+\section{Speicher}
+\begin{frame}
+    \frametitle{Stack und Heap}
+    \begin{columns}
+        \begin{column}{.5\textwidth}
+            \begin{itemize}
+                \item<+-> Hauptspeicher (RAM) wird aus zwei Richtungen vergeben
+                \item<+-> Stack wird für Funktion aufgebaut
+                \item<+-> Heap für dynamischen Speicher
+                \item<+-> Speicher auf dem Heap muss händisch reserviert und freigegeben werden
+                \item<+-> Bei mehr als einem Owner Verwaltung kompliziert
+            \end{itemize}
+        \end{column}
+        \begin{column}{.5\textwidth}
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}
+                    \draw [draw] (0,0) rectangle (3,5);
+                    \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {Stack};
+                    \filldraw [draw=black,fill=gray!20] (0,4.5) rectangle (3,5) node[pos=.5] {Heap};
+                    \filldraw [draw=black,fill=gray!20] (0,3.5) rectangle (3,4) node[pos=.5] {Heap};
+                    \draw [->] (1.5,1) -- (1.5,2);
+                \end{tikzpicture}
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Stack}
+    \begin{columns}
+        \begin{column}{.5\textwidth}
+            \lstinputlisting{examples/slides/stack.c}
+        \end{column}
+        \begin{column}{.5\textwidth}
+            \begin{figure}[H]
+                \centering
+                \only<1> {
+                    \begin{tikzpicture}
+                        \draw [draw] (0,0) rectangle (3,6);
+                    \end{tikzpicture}
+                }
+                \only<2,6> {
+                    \begin{tikzpicture}
+                        \draw [draw] (0,0) rectangle (3,6);
+                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
+                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
+                    \end{tikzpicture}
+                }
+                \only<3> {
+                    \begin{tikzpicture}
+                        \draw [draw] (0,0) rectangle (3,6);
+                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
+                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
+                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Verwaltungsinfo};
+                    \end{tikzpicture}
+                }
+                \only<4> {
+                    \begin{tikzpicture}
+                        \draw [draw] (0,0) rectangle (3,6);
+                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
+                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
+                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Verwaltungsinfo};
+                        \filldraw [draw=black,fill=gray!20] (0,3) rectangle (3,4) node[pos=.5] {\lstinline{int arg}};
+                    \end{tikzpicture}
+                }
+                \only<5> {
+                    \begin{tikzpicture}
+                        \draw [draw] (0,0) rectangle (3,6);
+                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
+                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
+                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Verwaltungsinfo};
+                        \filldraw [draw=black,fill=gray!20] (0,3) rectangle (3,4) node[pos=.5] {\lstinline{int arg}};
+                        \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,5) node[pos=.5] {\lstinline{int res}};
+                    \end{tikzpicture}
+                }
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \Huge{Reicht das nicht?}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Heap}
+    \begin{columns}
+        \begin{column}{.5\textwidth}
+            \lstinputlisting{examples/slides/heap.cpp}
+        \end{column}
+        \begin{column}{.5\textwidth}
+            \begin{figure}[H]
+                \centering
+                \only<1> {
+                    \begin{tikzpicture}
+                        \draw [draw] (0,0) rectangle (3,6);
+                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Verwendung};
+                    \end{tikzpicture}
+                }
+                \only<2> {
+                    \begin{tikzpicture}
+                        \draw [draw] (0,0) rectangle (3,6);
+                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Verwendung};
+                        \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,2) node[pos=.5] {\lstinline{a}};
+                    \end{tikzpicture}
+                }
+                \only<3> {
+                    \begin{tikzpicture}
+                        \draw [draw] (0,0) rectangle (3,6);
+                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Verwendung};
+                        \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,2) node[pos=.5] {\lstinline{a}};
+                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,0) node[pos=.5] {\lstinline{b}};
+                    \end{tikzpicture}
+                }
+                \only<4> {
+                    \begin{tikzpicture}
+                        \draw [draw] (0,0) rectangle (3,6);
+                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Verwendung};
+                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,0) node[pos=.5] {\lstinline{b}};
+                    \end{tikzpicture}
+                }
+                
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\section{Zero-Copy}
+
+\begin{frame}
+    \frametitle{Speicherverwaltung}
+    \begin{itemize}
+        \item \lstinputlisting{examples/slides/copy.cpp}
+            \pause
+        \item Jegliche Zuweisung ist eine Kopie, auch für Funktionsargumente
+            \pause
+        \item Einfach verständlich
+            \pause
+        \item Für große Objekte unnötige Performanceeinbuße
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Smart-Pointer}
+    \begin{itemize}
+        \item Standardlibrary kann Verwaltung übernehmen
+            \pause
+        \item \lstinline{unique\_ptr}
+            \pause
+        \item Genau ein Owner
+            \pause
+        \item
+            \lstinline{std::unique\_ptr<int> a = std::make\_unique<int>(17);}
+            \pause
+        \item \lstinline{shared\_ptr}
+            \pause
+        \item Quasi immer nutzbar
+            \pause
+        \item
+            \lstinline{std::shared\_ptr<int> a = std::make\_shared<int>(17);}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Referenzen}
+    \begin{itemize}
+        \item Sprachfeature kein Library-Feature
+            \pause
+        \item Können nicht null sein
+            \pause
+        \item Können aber ungültig werden
+            \pause
+        \item
+            \lstinline{int b = 17; int &a = b;}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Zusammenfassung Pointer}
+    \begin{itemize}
+        \item Raw-Pointer: Sollten quasi nie verwendet werden
+            \pause
+        \item Unique-Pointer: Oftmals Ersatz für Raw-Pointer
+            \pause
+        \item Shared-Pointer: Sichere Pointer für beliebig viele Owner
+            \pause
+        \item Referenzen: Oftmals um Kopien zu vermeiden
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \Huge{Beispiel: Pointer \& Referenzen}
+\end{frame}
+
+\section*{References}
+\begin{frame}
+  \frametitle{References}
+  \printbibliography
+\end{frame}
+
+\end{document}
