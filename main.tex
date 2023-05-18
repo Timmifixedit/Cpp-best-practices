@@ -30,7 +30,7 @@
 }
 
 
-\title{Introduction to Modern C++}
+\title{Modern C++ Best Practices}
 \author{Tim Luchterhand, based on a presentation by Paul Nykiel \cite{Nykiel2020}}
 \date{\today}
 
@@ -42,18 +42,43 @@
     \tableofcontents
 }
 
-
-\section{Speicher}
+\section{Introduction}
 \begin{frame}
-    \frametitle{Stack und Heap}
+    \frametitle{Features of C++}
+    \begin{itemize}
+        \item<+-> C++ $\neq$ C with classes!
+        \item<+-> Deterministic lifetime of objects
+        \item<+-> No garbage collection
+        \item<+-> Undefined behavior
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Goals of this Talk}
+    \begin{itemize}
+        \item<+-> Avoid undefined behavior at all times
+        \item<+-> Let go of old habits from C, do not use C constructs if not necessary
+        \begin{itemize}
+            \item<+-> C-Arrays
+            \item<+-> Pointers
+            \item<+-> Manual memory management
+        \end{itemize}
+        \item<+-> Focus on logic instead of low level data structures and memory management
+        \item<+-> Use the stl
+    \end{itemize}
+\end{frame}
+
+\section{Memory Layout}
+\begin{frame}
+    \frametitle{Stack and Heap}
     \begin{columns}
         \begin{column}{.5\textwidth}
             \begin{itemize}
-                \item<+-> Hauptspeicher (RAM) wird aus zwei Richtungen vergeben
-                \item<+-> Stack wird für Funktion aufgebaut
-                \item<+-> Heap für dynamischen Speicher
-                \item<+-> Speicher auf dem Heap muss händisch reserviert und freigegeben werden
-                \item<+-> Bei mehr als einem Owner Verwaltung kompliziert
+                \item<+-> System memory (RAM) is divided in two parts
+                \item<+-> Stack is used for function calls
+                \item<+-> Heap is used for dynamically allocated memory
+                \item<+-> Allocated memory on the heap needs to be freed \textit{manually}
+                \item<+-> If there is more than one owner this can get complicated
             \end{itemize}
         \end{column}
         \begin{column}{.5\textwidth}
@@ -72,7 +97,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Stack}
+    \frametitle{Example: Stack}
     \begin{columns}
         \begin{column}{.5\textwidth}
             \lstinputlisting{examples/slides/stack.c}
@@ -97,7 +122,7 @@
                         \draw [draw] (0,0) rectangle (3,6);
                         \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
                         \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
-                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Verwaltungsinfo};
+                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Management Info};
                     \end{tikzpicture}
                 }
                 \only<4> {
@@ -105,7 +130,7 @@
                         \draw [draw] (0,0) rectangle (3,6);
                         \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
                         \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
-                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Verwaltungsinfo};
+                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Management Info};
                         \filldraw [draw=black,fill=gray!20] (0,3) rectangle (3,4) node[pos=.5] {\lstinline{int arg}};
                     \end{tikzpicture}
                 }
@@ -114,7 +139,7 @@
                         \draw [draw] (0,0) rectangle (3,6);
                         \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
                         \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
-                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Verwaltungsinfo};
+                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Management Info};
                         \filldraw [draw=black,fill=gray!20] (0,3) rectangle (3,4) node[pos=.5] {\lstinline{int arg}};
                         \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,5) node[pos=.5] {\lstinline{int res}};
                     \end{tikzpicture}
@@ -125,11 +150,11 @@
 \end{frame}
 
 \begin{frame}
-    \Huge{Reicht das nicht?}
+    \Huge{Is that not enough?}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Heap}
+    \frametitle{Example: Heap}
     \begin{columns}
         \begin{column}{.5\textwidth}
             \lstinputlisting{examples/slides/heap.cpp}
@@ -140,20 +165,20 @@
                 \only<1> {
                     \begin{tikzpicture}
                         \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Verwendung};
+                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
                     \end{tikzpicture}
                 }
                 \only<2> {
                     \begin{tikzpicture}
                         \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Verwendung};
+                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
                         \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,2) node[pos=.5] {\lstinline{a}};
                     \end{tikzpicture}
                 }
                 \only<3> {
                     \begin{tikzpicture}
                         \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Verwendung};
+                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
                         \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,2) node[pos=.5] {\lstinline{a}};
                         \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,0) node[pos=.5] {\lstinline{b}};
                     \end{tikzpicture}
@@ -161,30 +186,38 @@
                 \only<4> {
                     \begin{tikzpicture}
                         \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Verwendung};
+                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
                         \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,0) node[pos=.5] {\lstinline{b}};
                     \end{tikzpicture}
                 }
-                
             \end{figure}
         \end{column}
     \end{columns}
 \end{frame}
 
-\section{Zero-Copy}
+\begin{frame}
+    \frametitle{Object Lifetime}
+    \lstinputlisting{examples/slides/lifetime.cpp}
+\end{frame}
 
 \begin{frame}
-    \frametitle{Speicherverwaltung}
+    \frametitle{Memory Leak}
+    \lstinputlisting{examples/slides/memory_leak.cpp}
+\end{frame}
+
+
+\section{Zero Copy, Function Parameters and Aliases}
+\begin{frame}
+    \frametitle{C++ Copies by Default}
     \begin{itemize}
-        \item \lstinputlisting{examples/slides/copy.cpp}
-            \pause
-        \item Jegliche Zuweisung ist eine Kopie, auch für Funktionsargumente
-            \pause
-        \item Einfach verständlich
-            \pause
-        \item Für große Objekte unnötige Performanceeinbuße
+        \item<+-> \lstinputlisting{examples/slides/copy.cpp}
+        \item<+-> \textit{Every} assignment is a copy
+        \item<+-> Very simple
+        \item<+-> Bad Performance for large objects
     \end{itemize}
 \end{frame}
+
+\section{Zero-Copy}
 
 \begin{frame}
     \frametitle{Smart-Pointer}
