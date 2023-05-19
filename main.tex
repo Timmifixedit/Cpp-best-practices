@@ -363,6 +363,35 @@
     \lstinputlisting{examples/slides/raii1.cpp}
 \end{frame}
 
+\section{Useful Tools}
+\begin{frame}
+    \frametitle{Address Sanitizer}
+    \begin{itemize}
+        \item<+-> Detects invalid memory accesses and memory leaks
+        \item<+-> Works with clang and g++
+        \item<+-> Add compilation flag \lstinline{-fsanitize=address -g}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{backwardscpp}
+    \begin{itemize}
+        \item<+-> Header only library \url{https://github.com/bombela/backward-cpp}
+        \item<+-> Prints readable stack traces
+        \item<+-> Best integrated with CMake
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Clang-Tidy}
+    \begin{itemize}
+        \item<+-> Static code analysis tool \url{https://clang.llvm.org/extra/clang-tidy/}
+        \item<+-> Detects bugprone and inefficient code
+        \item<+-> Checks can be configured in config file
+        \item<+-> Directly integrated in CLion
+    \end{itemize}
+\end{frame}
+
 \section*{References}
 \begin{frame}
   \frametitle{References}
