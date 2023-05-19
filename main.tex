@@ -299,6 +299,52 @@
     \lstinputlisting{examples/slides/move_impl.cpp}
 \end{frame}
 
+\section{Rule of Zero / Rule of Five}
+
+\begin{frame}
+    \frametitle{Special Members}
+    \begin{itemize}
+        \item<+-> Copy constructor \lstinline{Object(const Object o &other)}
+        \item<+-> Move constructor \lstinline{Object(Object o &&other)}
+        \item<+-> Copy assignment \lstinline{Object &opertaor=(const Object &other)}
+        \item<+-> Move assignment \lstinline{Object &opertaor=(Object &&other)}
+        \item<+-> Destructor \url{~}\lstinline{Object()}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Rule of Zero}
+    \begin{itemize}
+        \item<+-> Classes that do not directly manage memory
+        \item<+-> Compiler auto-generates all five special members (memberwise)
+        \item<+-> Rule (cpp core guidelines): \textbf{If you can avoid defining default operations, do!}
+    \end{itemize}
+    \only<+->{\lstinputlisting{examples/slides/rule_of_zero.cpp}}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Rule of Five}
+    \begin{itemize}
+        \item<+-> Classes that manage resources need to
+        \begin{itemize}
+            \item<+-> free them in the Destructor
+            \item<+-> make sure that copy construction and assignment are carried out correctly
+        \end{itemize}
+        \item<+-> Move constructor and assignment are disabled if any of the following members is given
+        \begin{itemize}
+            \item<+-> Copy constructor (even \lstinline|= default| or \lstinline|= delete|)
+            \item<+-> Copy assignment (even \lstinline|= default| or \lstinline|= delete|)
+            \item<+-> Destructor (even \lstinline|= default|)
+        \end{itemize}
+        \item<+-> Rule: \textbf{If you define any of the five special members, define them all!}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Rule of Five}
+    \lstinputlisting{examples/slides/rule_of_five.cpp}
+\end{frame}
+
 \section*{References}
 \begin{frame}
   \frametitle{References}
