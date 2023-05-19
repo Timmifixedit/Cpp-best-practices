@@ -299,7 +299,7 @@
     \lstinputlisting{examples/slides/move_impl.cpp}
 \end{frame}
 
-\section{Rule of Zero / Rule of Five}
+\section{Rule of Zero, Rule of Five, RAII}
 
 \begin{frame}
     \frametitle{Special Members}
@@ -343,6 +343,24 @@
 \begin{frame}
     \frametitle{Rule of Five}
     \lstinputlisting{examples/slides/rule_of_five.cpp}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Resource Acquisition is Initialization (RAII)}
+    \begin{itemize}
+        \item<+-> Classes that manages resources acquire them during initialization (constructor)
+        \item<+-> Destructor cleans everything up
+        \item<+-> Provides exception safety
+    \end{itemize}
+    \only<+->{\lstinputlisting{examples/slides/raii.cpp}}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Extension}
+    After a call to the constructor, \textbf{any} object should be ready to use. Bad example:
+    \pause
+    \lstinputlisting{examples/slides/raii1.cpp}
 \end{frame}
 
 \section*{References}
