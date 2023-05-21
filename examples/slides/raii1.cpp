@@ -2,7 +2,7 @@ class Solver {
     Options options;
 public:
     Solver() = default;
-    void inizialize(const Options &options) {
+    void initialize(const Options &options) {
         this->options = options;
     }
 
