@@ -64,7 +64,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Goals of this Talk}
+    \frametitle{General Goals}
     \begin{itemize}
         \item<+-> Avoid undefined behavior at all times
         \item<+-> Let go of old habits from C, do not use C constructs if not necessary
@@ -74,7 +74,7 @@
             \item<+-> Manual memory management
         \end{itemize}
         \item<+-> Focus on logic instead of low level data structures and memory management
-        \item<+-> Use the stl
+        \item<+-> Use the STL
     \end{itemize}
 \end{frame}
 
@@ -206,7 +206,7 @@
 %\end{frame}
 
 
-\section{Zero Copy, Function Parameters and Aliases}
+\section{Zero Copy: Function Parameters and Smart-Pointers}
 \begin{frame}
     \frametitle{C++ Copies by Default}
     \begin{itemize}
@@ -222,10 +222,10 @@
 %    \lstinputlisting{examples/slides/references.cpp}
 %\end{frame}
 
-\begin{frame}
-    \frametitle{Alias References}
-    \lstinputlisting{examples/slides/references1.cpp}
-\end{frame}
+%\begin{frame}
+%    \frametitle{Alias References}
+%    \lstinputlisting{examples/slides/references1.cpp}
+%\end{frame}
 
 \begin{frame}
     \frametitle{Pass by Reference}
@@ -290,14 +290,14 @@
     \lstinputlisting{examples/slides/move_explanation.cpp}
 \end{frame}
 
-\begin{frame}
-    \frametitle{What does std::move do?}
-    Quote from cppreference.com:
-    
-    It is exactly equivalent to a \lstinline|static\_cast| to an rvalue reference type. 
-    \pause
-    \lstinputlisting{examples/slides/move_impl.cpp}
-\end{frame}
+%\begin{frame}
+%    \frametitle{What does std::move do?}
+%    Quote from cppreference.com:
+%    
+%    It is exactly equivalent to a \lstinline|static\_cast| to an rvalue reference type. 
+%    \pause
+%    \lstinputlisting{examples/slides/move_impl.cpp}
+%\end{frame}
 
 \section{Rule of Zero, Rule of Five, RAII}
 
