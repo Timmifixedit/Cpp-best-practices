@@ -54,6 +54,16 @@
 \end{frame}
 
 \begin{frame}
+    \frametitle{Object Lifetime}
+    \lstinputlisting{examples/slides/lifetime.cpp}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Memory Leak}
+    \lstinputlisting{examples/slides/memory_leak.cpp}
+\end{frame}
+
+\begin{frame}
     \frametitle{Goals of this Talk}
     \begin{itemize}
         \item<+-> Avoid undefined behavior at all times
@@ -68,142 +78,132 @@
     \end{itemize}
 \end{frame}
 
-\section{Memory Layout}
-\begin{frame}
-    \frametitle{Stack and Heap}
-    \begin{columns}
-        \begin{column}{.5\textwidth}
-            \begin{itemize}
-                \item<+-> System memory (RAM) is divided in two parts
-                \item<+-> Stack is used for function calls
-                \item<+-> Heap is used for dynamically allocated memory
-                \item<+-> Allocated memory on the heap needs to be freed \textit{manually}
-                \item<+-> If there is more than one owner this can get complicated
-            \end{itemize}
-        \end{column}
-        \begin{column}{.5\textwidth}
-            \begin{figure}[H]
-                \centering
-                \begin{tikzpicture}
-                    \draw [draw] (0,0) rectangle (3,5);
-                    \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {Stack};
-                    \filldraw [draw=black,fill=gray!20] (0,4.5) rectangle (3,5) node[pos=.5] {Heap};
-                    \filldraw [draw=black,fill=gray!20] (0,3.5) rectangle (3,4) node[pos=.5] {Heap};
-                    \draw [->] (1.5,1) -- (1.5,2);
-                \end{tikzpicture}
-            \end{figure}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Example: Stack}
-    \begin{columns}
-        \begin{column}{.5\textwidth}
-            \lstinputlisting{examples/slides/stack.c}
-        \end{column}
-        \begin{column}{.5\textwidth}
-            \begin{figure}[H]
-                \centering
-                \only<1> {
-                    \begin{tikzpicture}
-                        \draw [draw] (0,0) rectangle (3,6);
-                    \end{tikzpicture}
-                }
-                \only<2,6> {
-                    \begin{tikzpicture}
-                        \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
-                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
-                    \end{tikzpicture}
-                }
-                \only<3> {
-                    \begin{tikzpicture}
-                        \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
-                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
-                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Management Info};
-                    \end{tikzpicture}
-                }
-                \only<4> {
-                    \begin{tikzpicture}
-                        \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
-                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
-                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Management Info};
-                        \filldraw [draw=black,fill=gray!20] (0,3) rectangle (3,4) node[pos=.5] {\lstinline{int arg}};
-                    \end{tikzpicture}
-                }
-                \only<5> {
-                    \begin{tikzpicture}
-                        \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
-                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
-                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Management Info};
-                        \filldraw [draw=black,fill=gray!20] (0,3) rectangle (3,4) node[pos=.5] {\lstinline{int arg}};
-                        \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,5) node[pos=.5] {\lstinline{int res}};
-                    \end{tikzpicture}
-                }
-            \end{figure}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\begin{frame}
-    \Huge{Is that not enough?}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Example: Heap}
-    \begin{columns}
-        \begin{column}{.5\textwidth}
-            \lstinputlisting{examples/slides/heap.cpp}
-        \end{column}
-        \begin{column}{.5\textwidth}
-            \begin{figure}[H]
-                \centering
-                \only<1> {
-                    \begin{tikzpicture}
-                        \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
-                    \end{tikzpicture}
-                }
-                \only<2> {
-                    \begin{tikzpicture}
-                        \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
-                        \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,2) node[pos=.5] {\lstinline{a}};
-                    \end{tikzpicture}
-                }
-                \only<3> {
-                    \begin{tikzpicture}
-                        \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
-                        \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,2) node[pos=.5] {\lstinline{a}};
-                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,0) node[pos=.5] {\lstinline{b}};
-                    \end{tikzpicture}
-                }
-                \only<4> {
-                    \begin{tikzpicture}
-                        \draw [draw] (0,0) rectangle (3,6);
-                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
-                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,0) node[pos=.5] {\lstinline{b}};
-                    \end{tikzpicture}
-                }
-            \end{figure}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Object Lifetime}
-    \lstinputlisting{examples/slides/lifetime.cpp}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Memory Leak}
-    \lstinputlisting{examples/slides/memory_leak.cpp}
-\end{frame}
+%\section{Memory Layout}
+%\begin{frame}
+%    \frametitle{Stack and Heap}
+%    \begin{columns}
+%        \begin{column}{.5\textwidth}
+%            \begin{itemize}
+%                \item<+-> System memory (RAM) is divided in two parts
+%                \item<+-> Stack is used for function calls
+%                \item<+-> Heap is used for dynamically allocated memory
+%                \item<+-> Allocated memory on the heap needs to be freed \textit{manually}
+%                \item<+-> If there is more than one owner this can get complicated
+%            \end{itemize}
+%        \end{column}
+%        \begin{column}{.5\textwidth}
+%            \begin{figure}[H]
+%                \centering
+%                \begin{tikzpicture}
+%                    \draw [draw] (0,0) rectangle (3,5);
+%                    \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {Stack};
+%                    \filldraw [draw=black,fill=gray!20] (0,4.5) rectangle (3,5) node[pos=.5] {Heap};
+%                    \filldraw [draw=black,fill=gray!20] (0,3.5) rectangle (3,4) node[pos=.5] {Heap};
+%                    \draw [->] (1.5,1) -- (1.5,2);
+%                \end{tikzpicture}
+%            \end{figure}
+%        \end{column}
+%    \end{columns}
+%\end{frame}
+%
+%\begin{frame}
+%    \frametitle{Example: Stack}
+%    \begin{columns}
+%        \begin{column}{.5\textwidth}
+%            \lstinputlisting{examples/slides/stack.c}
+%        \end{column}
+%        \begin{column}{.5\textwidth}
+%            \begin{figure}[H]
+%                \centering
+%                \only<1> {
+%                    \begin{tikzpicture}
+%                        \draw [draw] (0,0) rectangle (3,6);
+%                    \end{tikzpicture}
+%                }
+%                \only<2,6> {
+%                    \begin{tikzpicture}
+%                        \draw [draw] (0,0) rectangle (3,6);
+%                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
+%                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
+%                    \end{tikzpicture}
+%                }
+%                \only<3> {
+%                    \begin{tikzpicture}
+%                        \draw [draw] (0,0) rectangle (3,6);
+%                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
+%                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
+%                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Management Info};
+%                    \end{tikzpicture}
+%                }
+%                \only<4> {
+%                    \begin{tikzpicture}
+%                        \draw [draw] (0,0) rectangle (3,6);
+%                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
+%                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
+%                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Management Info};
+%                        \filldraw [draw=black,fill=gray!20] (0,3) rectangle (3,4) node[pos=.5] {\lstinline{int arg}};
+%                    \end{tikzpicture}
+%                }
+%                \only<5> {
+%                    \begin{tikzpicture}
+%                        \draw [draw] (0,0) rectangle (3,6);
+%                        \filldraw [draw=black,fill=gray!20] (0,0) rectangle (3,1) node[pos=.5] {\lstinline{int a}};
+%                        \filldraw [draw=black,fill=gray!20] (0,1) rectangle (3,2) node[pos=.5] {\lstinline{int b}};
+%                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,3) node[pos=.5] {Management Info};
+%                        \filldraw [draw=black,fill=gray!20] (0,3) rectangle (3,4) node[pos=.5] {\lstinline{int arg}};
+%                        \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,5) node[pos=.5] {\lstinline{int res}};
+%                    \end{tikzpicture}
+%                }
+%            \end{figure}
+%        \end{column}
+%    \end{columns}
+%\end{frame}
+%
+%\begin{frame}
+%    \Huge{Is that not enough?}
+%\end{frame}
+%
+%\begin{frame}
+%    \frametitle{Example: Heap}
+%    \begin{columns}
+%        \begin{column}{.5\textwidth}
+%            \lstinputlisting{examples/slides/heap.cpp}
+%        \end{column}
+%        \begin{column}{.5\textwidth}
+%            \begin{figure}[H]
+%                \centering
+%                \only<1> {
+%                    \begin{tikzpicture}
+%                        \draw [draw] (0,0) rectangle (3,6);
+%                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
+%                    \end{tikzpicture}
+%                }
+%                \only<2> {
+%                    \begin{tikzpicture}
+%                        \draw [draw] (0,0) rectangle (3,6);
+%                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
+%                        \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,2) node[pos=.5] {\lstinline{a}};
+%                    \end{tikzpicture}
+%                }
+%                \only<3> {
+%                    \begin{tikzpicture}
+%                        \draw [draw] (0,0) rectangle (3,6);
+%                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
+%                        \filldraw [draw=black,fill=gray!20] (0,4) rectangle (3,2) node[pos=.5] {\lstinline{a}};
+%                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,0) node[pos=.5] {\lstinline{b}};
+%                    \end{tikzpicture}
+%                }
+%                \only<4> {
+%                    \begin{tikzpicture}
+%                        \draw [draw] (0,0) rectangle (3,6);
+%                        \filldraw [draw=black,fill=gray!20] (0,5) rectangle (3,4) node[pos=.5] {In Use};
+%                        \filldraw [draw=black,fill=gray!20] (0,2) rectangle (3,0) node[pos=.5] {\lstinline{b}};
+%                    \end{tikzpicture}
+%                }
+%            \end{figure}
+%        \end{column}
+%    \end{columns}
+%\end{frame}
 
 
 \section{Zero Copy, Function Parameters and Aliases}
@@ -217,10 +217,10 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}
-    \frametitle{References}
-    \lstinputlisting{examples/slides/references.cpp}
-\end{frame}
+%\begin{frame}
+%    \frametitle{References}
+%    \lstinputlisting{examples/slides/references.cpp}
+%\end{frame}
 
 \begin{frame}
     \frametitle{Alias References}
@@ -228,12 +228,12 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Don't Overdo it}
+    \frametitle{Pass by Reference}
     \lstinputlisting{examples/slides/references2.cpp}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Smart-Pointer}
+    \frametitle{Smart-Pointers}
     \begin{itemize}
         \item<+-> Substitute for "raw C-pointers"
         \item<+-> Standard library takes care of memory management
@@ -363,7 +363,7 @@
     \lstinputlisting{examples/slides/raii1.cpp}
 \end{frame}
 
-\section{Useful Tools}
+\section{Useful Tools and Refernces}
 \begin{frame}
     \frametitle{Address Sanitizer}
     \begin{itemize}
@@ -392,9 +392,55 @@
     \end{itemize}
 \end{frame}
 
+\begin{frame}
+    \frametitle{Useful References}
+    \begin{itemize}
+        \item<+-> \url{cppreference.com}
+        \begin{itemize}
+            \item<+-> Official documentation of the stl
+            \item<+-> Core language features and properties
+            \item<+-> Examples
+        \end{itemize}
+        \item<+-> Cpp Core guidelines: \url{https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines}
+        \begin{itemize}
+            \item<+-> C++ philosophy
+            \item<+-> \textbf{Best practices}
+        \end{itemize}
+        \item<+-> \url{godbolt.org} compiler explorer
+        \begin{itemize}
+            \item<+-> Collection of all compilers
+            \item<+-> Assembly view
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{What is Missing?}
+    \begin{itemize}
+        \item<+-> Best practices:
+        \begin{itemize}
+            \item<+-> Const correctness
+            \item<+-> Error handling
+            \item<+-> Operator overloading
+            \item<+-> Function design: in, in-out and out parameters
+            \item<+-> Code documentation
+        \end{itemize}
+        \item<+-> Language features
+        \begin{itemize}
+            \item<+-> Templates and meta programming
+            \item<+-> Lambdas
+            \item<+-> Ranges
+            \item<+-> Concurrency and multi-threading
+        \end{itemize}
+    \end{itemize}
+
+    
+
+\end{frame}
+
 \section*{References}
 \begin{frame}
-  \frametitle{References}
+  \frametitle{This Work is Strongly Inspired and Based on}
   \printbibliography
 \end{frame}
 
