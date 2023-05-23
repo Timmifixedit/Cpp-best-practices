@@ -14,3 +14,4 @@ _minted-*
 *.bcf
 *.blg
 *.run.xml
+**/build
