@@ -10,7 +10,6 @@ class NamedValue {
 public:
     NamedValue(int val, const std::string &name) : name(name), val(val) {}
     int getValue() {
-
         return val;
     }
 
