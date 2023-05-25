@@ -1,13 +1,12 @@
-// pass by mutable reference
-void toGrayscale(std::list<Image> &images) {...} 
+// unecessary, int is trivially copyable
+int add(const int& a, const int& b) {
+    return a + b;
+}
 
-// pass by const reference
-void displayImage(const Image &images) {...} 
-
-int main(void) {
-    std::list<Image> images = readImages(); 
-    toGrayscale(images); 
-    for (const auto &image : images) { // loop by reference
-        displayImage(image); 
+// good, no copy necessary
+void printList(const std::list<int> &ints) {
+    // elements of list are trivially copyable => no reference
+    for (int i : ints) {
+        std::cout << i << std::endl;
     }
 }
